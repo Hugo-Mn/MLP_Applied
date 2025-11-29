@@ -1,0 +1,10 @@
+{
+    "input_size": 4352,
+    "output_size": 5,
+    "hiddenLayers": [2048, 1024, 512, 256],
+    "activationFunction": "gelu",
+    "learningRate": 0.0003,
+    "optimizer": "adam",
+    "lossFunction": "crossentropy",
+    "dropoutRate": 0.2
+}
