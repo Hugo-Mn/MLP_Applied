@@ -36,16 +36,20 @@ class Perceptron(nn.Module):
                 x = self.fActivation(x)
         return x
 
-    def train(self, train_loader, loss_function):
+    def train(self, train_loader, loss_function, optimizer):
         total_loss = 0
         for inputs, targets in train_loader:
-            self.optimizer.zero_grad()
+            optimizer.zero_grad()
             outputs = self.forward(inputs)
             loss = loss_function(outputs, targets)
             loss.backward()
-            self.optimizer.step()
+            optimizer.step()
             total_loss += loss.item()
         return total_loss / len(train_loader)
+
+    def train_epoch(self, train_loader, loss_function, optimizer):
+        """Alias for train() to match manager interface"""
+        return self.train(train_loader, loss_function, self.optimizer)
 
     def predict(self, x):
         self.eval()

@@ -72,17 +72,17 @@ class NeuralNetworkManager:
                 best_loss = train_loss
                 epochs_without_improvement = 0
                 torch.save(model.state_dict(), f'checkpoints/{name}_best.pth')
-                print(f"Epoch {epoch+1}/{self.config['epochs']} | Loss: {train_loss:.4f} ✓")
+                print(f"Epoch {epoch+1}/{self.config['epochs']} | Loss: {train_loss:.4f} [BEST]")
             else:
                 epochs_without_improvement += 1
                 print(f"Epoch {epoch+1}/{self.config['epochs']} | Loss: {train_loss:.4f} ({epochs_without_improvement}/{patience})")
 
             if epochs_without_improvement >= patience:
-                print(f"Arrêt : pas d'amélioration depuis {patience} epochs")
+                print(f"Early stopping: no improvement for {patience} epochs")
                 break
 
         model.load_state_dict(torch.load(f'checkpoints/{name}_best.pth'))
-        print(f"Meilleur modèle chargé (Loss: {best_loss:.4f})")
+        print(f"Best model loaded (Loss: {best_loss:.4f})")
 
     def prediction(self, name, input_data):
         model = self.networks[name]

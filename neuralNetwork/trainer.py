@@ -1,3 +1,4 @@
+#pyton
 from neuralNetwork import manager as nn_manager
 import argparse
 from neuralNetwork.dataset_loader import create_dataloader
@@ -42,16 +43,22 @@ class Trainer:
         elif self.args.action == 'train':
             if not self.args.dataset:
                 raise ValueError("Dataset path required for train action.")
+            if not self.args.config:
+                raise ValueError("Config is required for train action (--config).")
+
+            self.manager.setConfig()
             if self.args.modelPath:
-                self.loadNeuralNetwork()
-            elif self.args.config:
-                self.manager.setConfig()
-                self.manager.CreatePerceptron('default')
+                # Load existing model
+                name = self.args.modelPath.split('/')[-1].split('_')[0]
+                self.manager.CreatePerceptron(name)
+                self.manager.loadPerceptron(name, self.args.modelPath)
             else:
-                raise ValueError("Either --config (new) or modelPath (load) required.")
+                # Create new model
+                self.manager.CreatePerceptron('default')
+                name = 'default'
 
             train_loader = create_dataloader(self.args.dataset, self.args.batch_size)
-            self.manager.train('default', train_loader)
+            self.manager.train(name, train_loader)
             print("Training completed successfully.")
         elif self.args.action == 'predict':
             if not self.args.modelPath:

@@ -1,0 +1,5 @@
+# Créer un nouveau modèle
+python -m neuralNetwork.trainer create --config config/Network1.json
+
+# Entraîner un modèle existant
+python -m neuralNetwork.trainer train checkpoints/MyModel_model.pth --config config/Network1.json --dataset datasetTrain --epochs 50 --patience 5
