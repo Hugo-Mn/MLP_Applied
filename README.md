@@ -283,12 +283,12 @@ seaborn==0.12+
 pip install torch torchaudio transformers librosa soundfile pandas numpy scikit-learn
 
 # 2. Create model
-python run.py create mymodel
+python -m neuralNetwork.main create --config config/Network1.json
 
 # 3. Train
-python run.py train mymodel --epochs 30 --patience 3
+python -m neuralNetwork.main train --config config/Network1.json --dataset datasetTrain --epochs 30 --patience 3
 
-# 4. Done! Best model saved in checkpoints/mymodel_model.pth
+# 4. Done! Best model saved in checkpoints/
 ```
 
 ## Support
