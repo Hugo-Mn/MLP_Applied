@@ -24,7 +24,6 @@ class AudioTextDataset(Dataset):
         return final_input, label
 
     def precompute_embeddings(self):
-        """Pre-compute all embeddings once at dataset initialization"""
         for i, sample in enumerate(self.samples):
             if (i + 1) % 100 == 0:
                 print(f"  Processed {i + 1}/{len(self.samples)} samples")

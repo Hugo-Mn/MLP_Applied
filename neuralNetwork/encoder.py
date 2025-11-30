@@ -6,10 +6,9 @@ import numpy as np
 
 class Encoder:
     def __init__(self):
-        # Detect and use GPU if available
         self.device = t.device("cuda" if t.cuda.is_available() else "cpu")
         print(f"[Encoder] Using device: {self.device}")
-        
+
         self.bert = RemBertModel.from_pretrained("google/rembert").to(self.device)
         self.txtTokenizer = RemBertTokenizer.from_pretrained("google/rembert")
         self.xlsrProcessor = AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-xls-r-300m")
@@ -18,9 +17,7 @@ class Encoder:
         self.xlsr.eval()
 
     def convertOpusToWav(self, audioPath):
-        # Use librosa to load audio (supports opus natively)
         audio, sr = librosa.load(audioPath, sr=16000, mono=True)
-        # Normalize to float32
         audio = audio.astype("float32")
         return audio
 
