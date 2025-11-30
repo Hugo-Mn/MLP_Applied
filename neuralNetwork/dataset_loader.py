@@ -10,16 +10,33 @@ class AudioTextDataset(Dataset):
         self.encoder = Encoder()
         self.samples = []
         self.loadDataset(dataset_path)
+        print("Pre-computing embeddings... (this may take a while)")
+        self.precompute_embeddings()
 
     def __len__(self):
         return len(self.samples)
 
     def __getitem__(self, idx):
         sample = self.samples[idx]
-        final_input, target = self.encoder.encodeOneSet(sample['text'], sample['audio'])
-        label = self.countryToLabel(target)
+        # Embeddings are already pre-computed, just return them
+        final_input = sample['embedding']
+        label = sample['label']
+        return final_input, label
 
-        return final_input.squeeze(0), label
+    def precompute_embeddings(self):
+        """Pre-compute all embeddings once at dataset initialization"""
+        for i, sample in enumerate(self.samples):
+            if (i + 1) % 100 == 0:
+                print(f"  Processed {i + 1}/{len(self.samples)} samples")
+            try:
+                final_input, target = self.encoder.encodeOneSet(sample['text'], sample['audio'])
+                label = self.countryToLabel(target)
+                sample['embedding'] = final_input.squeeze(0)
+                sample['label'] = label
+            except Exception as e:
+                print(f"  Error processing sample {i}: {e}")
+                sample['embedding'] = torch.zeros(4352)  # Default embedding
+                sample['label'] = torch.tensor(0, dtype=torch.long)
 
     def loadDataset(self, dataset_path):
         if not os.path.exists(dataset_path):
@@ -28,7 +45,6 @@ class AudioTextDataset(Dataset):
 
         for extract_folder in sorted(os.listdir(dataset_path)):
             extract_path = os.path.join(dataset_path, extract_folder)
-
             if not os.path.isdir(extract_path):
                 continue
 
@@ -62,6 +78,23 @@ class AudioTextDataset(Dataset):
         }
         label = mapping.get(country, 0)
         return torch.tensor(label, dtype=torch.long)
+    
+    def save_current_embeddings(self, filename="embeddings_backup.pkl"):
+        """Sauvegarde les embeddings actuels en fichier"""
+        import pickle
+        data = {}
+        for i, sample in enumerate(self.samples):
+            if 'embedding' in sample:
+                data[i] = {
+                    'embedding': sample['embedding'].cpu(),
+                    'label': sample['label']
+                }
+        
+        with open(filename, 'wb') as f:
+            pickle.dump(data, f)
+        
+        print(f"Saved {len(data)} embeddings to {filename}")
+
 
 
 def create_dataloader(dataset_path, batch_size=32):

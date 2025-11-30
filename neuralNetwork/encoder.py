@@ -3,14 +3,17 @@ import torch as t
 import torchaudio as ta
 import librosa
 import numpy as np
-import os
 
 class Encoder:
     def __init__(self):
-        self.bert = RemBertModel.from_pretrained("google/rembert")
+        # Detect and use GPU if available
+        self.device = t.device("cuda" if t.cuda.is_available() else "cpu")
+        print(f"[Encoder] Using device: {self.device}")
+        
+        self.bert = RemBertModel.from_pretrained("google/rembert").to(self.device)
         self.txtTokenizer = RemBertTokenizer.from_pretrained("google/rembert")
         self.xlsrProcessor = AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-xls-r-300m")
-        self.xlsr = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-xls-r-300m")
+        self.xlsr = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-xls-r-300m").to(self.device)
         self.bert.eval()
         self.xlsr.eval()
 
@@ -31,11 +34,13 @@ class Encoder:
     #bert embedding 1152
     def encodeText(self, txtPath=None):
         if txtPath is None:
-            return t.zeros((1, 2304)), None
+            return t.zeros((1, 2304)).to(self.device), None
         text, target = self.readFile(txtPath)
         if not text or text == "":
-            return t.zeros((1, 2304)), target
+            return t.zeros((1, 2304)).to(self.device), target
         inputs = self.txtTokenizer(text, return_tensors="pt", padding=True, truncation=True)
+        # Move inputs to GPU
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
         with t.no_grad():
             outputs = self.bert(**inputs)
         embeddingsMax = outputs.last_hidden_state.max(dim=1).values
@@ -45,9 +50,11 @@ class Encoder:
     #xls embdding 1024
     def encodeAudio(self, audioPath=None):
         if audioPath is None:
-            return t.zeros((1, 2048))
+            return t.zeros((1, 2048)).to(self.device)
         audio = self.convertOpusToWav(audioPath)
         inputs = self.xlsrProcessor(audio, sampling_rate=16000, return_tensors="pt", padding=True)
+        # Move inputs to GPU
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
         with t.no_grad():
             outputs = self.xlsr(**inputs)
         embeddingsMax = outputs.last_hidden_state.max(dim=1).values

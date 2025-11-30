@@ -3,3 +3,16 @@ python -m neuralNetwork.trainer create --config config/Network1.json
 
 # Entraîner un modèle existant
 python -m neuralNetwork.trainer train checkpoints/MyModel_model.pth --config config/Network1.json --dataset datasetTrain --epochs 50 --patience 5
+
+
+
+=== Overall Accuracy: 96.50% (965/1000) ===
+
+=== Accuracy per Language ===
+French      : 95.50% (191/200)
+Polish      : 99.50% (199/200)
+Portuguese  : 97.50% (195/200)
+Italian     : 94.50% (189/200)
+Spanish     : 95.50% (191/200)
+
+Evaluation completed. Accuracy: 96.50%

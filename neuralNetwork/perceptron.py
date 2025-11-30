@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-
 class Perceptron(nn.Module):
     def __init__(self, input_size, output_size, fActivation=F.relu, hiddenLayers=[], dropoutRate=0.0):
         super(Perceptron, self).__init__()
@@ -13,8 +12,10 @@ class Perceptron(nn.Module):
         self.fActivation = fActivation
         self.dropoutRate = dropoutRate
         self.network = None
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.createNetwork()
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.0003)
+        self.to(self.device)
 
 
     def createNetwork(self):
@@ -39,6 +40,8 @@ class Perceptron(nn.Module):
     def train(self, train_loader, loss_function, optimizer):
         total_loss = 0
         for inputs, targets in train_loader:
+            inputs = inputs.to(self.device)
+            targets = targets.to(self.device)
             optimizer.zero_grad()
             outputs = self.forward(inputs)
             loss = loss_function(outputs, targets)
@@ -48,11 +51,9 @@ class Perceptron(nn.Module):
         return total_loss / len(train_loader)
 
     def train_epoch(self, train_loader, loss_function, optimizer):
-        """Alias for train() to match manager interface"""
         return self.train(train_loader, loss_function, self.optimizer)
 
     def predict(self, x):
-        self.eval()
         with torch.no_grad():
             outputs = self.forward(x)
         return outputs
