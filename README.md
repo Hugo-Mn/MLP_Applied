@@ -152,11 +152,6 @@ The model will be saved to `checkpoints/MyLanguageModel_model.pth`
 
 ### 2. Train a Model
 
-**Train a new model:**
-```bash
-python -m neuralNetwork.main train --config config/Network1.json --dataset datasetTrain --epochs 50 --patience 5 --batch_size 32
-```
-
 **Continue training an existing model:**
 ```bash
 python -m neuralNetwork.main train checkpoints/MyLanguageModel_model.pth --config config/Network1.json --dataset datasetTrain --epochs 50 --patience 5 --batch_size 32
@@ -288,12 +283,12 @@ seaborn==0.12+
 pip install torch torchaudio transformers librosa soundfile pandas numpy scikit-learn
 
 # 2. Create model
-python -m neuralNetwork.main create --config config/Network1.json
+python run.py create mymodel
 
 # 3. Train
-python -m neuralNetwork.main train --config config/Network1.json --dataset datasetTrain --epochs 30 --patience 3
+python run.py train mymodel --epochs 30 --patience 3
 
-# 4. Done! Best model saved in checkpoints/
+# 4. Done! Best model saved in checkpoints/mymodel_model.pth
 ```
 
 ## Support
