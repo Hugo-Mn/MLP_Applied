@@ -48,25 +48,47 @@ Check your CUDA version and install accordingly. Without this, the project runs 
 ```
 MLP_Applied/
 ├── config/
-│   └── Network1.json              # Network architecture configuration
-├── datasetTrain/
-│   ├── extract_1/
-│   │   ├── text.txt               # Text content (country + text)
-│   │   └── *.opus                 # Audio file
-│   ├── extract_2/
-│   └── extract_3/
-├── checkpoints/                   # Saved models
-├── neuralNetwork/
-│   ├── encoder.py                 # Audio & text encoding
-│   ├── perceptron.py              # Neural network architecture
-│   ├── manager.py                 # Model management
-│   ├── dataset_loader.py          # Data loading
-│   ├── trainer.py                 # CLI trainer interface
-│   └── main.py                    # Entry point
+│   └── Network1.json                  # Network architecture configuration
+├── neuralNetwork/                     # Main neural network module
+│   ├── __pycache__/                   # Python cache
+│   ├── encoder.py                     # RemBERT + XLS-R text/audio encoding
+│   ├── perceptron.py                  # Neural network model class
+│   ├── manager.py                     # Training management & checkpointing
+│   ├── dataset_loader.py              # Dataset loading & preprocessing
+│   ├── trainer.py                     # CLI interface (create/train/predict)
+│   └── main.py                        # Main entry point
 ├── ploting/
-│   └── plot.py                    # Visualization
-└── README.md
+│   └── plot.py                        # Visualization (stacked bar charts)
+├── datasetTrain/                      # Training dataset
+│   ├── extract_1/
+│   │   ├── text.txt                   # Country name + text content (UTF-8)
+│   │   └── audio.opus                 # Audio file (mono, 16kHz)
+│   ├── extract_2/
+│   │   ├── text.txt
+│   │   └── audio.opus
+│   └── extract_N/
+│       ├── text.txt
+│       └── audio.opus
+├── checkpoints/                       # Saved models & training checkpoints
+│   └── model_name_best.pth            # Best model state dict
+├── extract_embeddings.py              # Utility for embedding extraction
+├── note.txt                           # Development notes
+├── LICENSE                            # Project license
+└── README.md                          # This file
 ```
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `neuralNetwork/main.py` | Main entry point - run with `python -m neuralNetwork.main` |
+| `neuralNetwork/trainer.py` | CLI interface for create/train/predict actions |
+| `neuralNetwork/encoder.py` | Encodes text (RemBERT) + audio (XLS-R) to embeddings |
+| `neuralNetwork/perceptron.py` | PyTorch neural network model |
+| `neuralNetwork/manager.py` | Training loop with early stopping & checkpointing |
+| `neuralNetwork/dataset_loader.py` | Loads dataset & handles batching |
+| `config/Network1.json` | Network architecture & hyperparameter configuration |
+| `ploting/plot.py` | Visualization tool for results |
 
 ## Dataset Format
 
