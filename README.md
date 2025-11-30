@@ -24,6 +24,8 @@ A PyTorch-based neural network that classifies languages using both audio and te
 - Python 3.8+
 - pip
 
+**For macOS users:** See [SETUPME.md](SETUPME.md) for detailed Python installation instructions.
+
 ### Step 1: Install Dependencies
 
 ```bash
@@ -82,7 +84,7 @@ MLP_Applied/
 | File | Purpose |
 |------|---------|
 | `neuralNetwork/main.py` | Main entry point - run with `python -m neuralNetwork.main` |
-| `neuralNetwork/trainer.py` | CLI interface for create/train/predict actions |
+| `neuralNetwork/trainer.py` | CLI interface for create/train/evaluate actions |
 | `neuralNetwork/encoder.py` | Encodes text (RemBERT) + audio (XLS-R) to embeddings |
 | `neuralNetwork/perceptron.py` | PyTorch neural network model |
 | `neuralNetwork/manager.py` | Training loop with early stopping & checkpointing |
@@ -152,23 +154,33 @@ The model will be saved to `checkpoints/MyLanguageModel_model.pth`
 
 ### 2. Train a Model
 
+**Train a new model:**
+```bash
+python -m neuralNetwork.main train --config config/Network1.json --dataset datasetTrain --epochs 50 --patience 5 --batch_size 32
+```
+
 **Continue training an existing model:**
 ```bash
 python -m neuralNetwork.main train checkpoints/MyLanguageModel_model.pth --config config/Network1.json --dataset datasetTrain --epochs 50 --patience 5 --batch_size 32
 ```
 
-**Parameters:**
-- `--config`: Path to configuration file (required for training)
+**Parameters (--config is required):**
+- `--config`: Path to configuration file **(REQUIRED)**
 - `--dataset`: Path to training data directory
 - `--epochs`: Number of training epochs (default: 50)
 - `--patience`: Early stopping patience (default: 5)
 - `--batch_size`: Batch size for training (default: 32)
 
-### 3. Make Predictions
+### 3. Evaluate a Model
 
 ```bash
-python -m neuralNetwork.main predict checkpoints/MyLanguageModel_model.pth --dataset /path/to/audio_text_files
+python -m neuralNetwork.main evaluate checkpoints/MyLanguageModel_model.pth --config config/Network1.json --dataset datasetTrain
 ```
+
+**Important Notes:**
+- `--config` is required for evaluation to match the model architecture
+- If you modified `--batch_size` during training, use the same batch size for evaluation
+- Example: If trained with `--batch_size 16`, also use `--batch_size 16` for evaluate
 
 ## Training Output
 
@@ -184,6 +196,22 @@ Epoch 3/50 | Loss: 1.2722 [BEST]
 ...
 Best model loaded (Loss: 0.1234)
 Training completed successfully.
+```
+
+## Evaluation Output
+
+During evaluation, you'll see:
+```
+[Encoder] Using device: cpu
+Dataset loaded: 120 samples found
+Pre-computing embeddings... (this may take a while)
+
+=== Overall Accuracy: 100.00% (3/3) ===
+
+=== Accuracy per Language ===
+French      : 100.00% (3/3)
+
+Evaluation completed. Accuracy: 100.00%
 ```
 
 ## Model Encoding Details
