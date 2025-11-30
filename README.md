@@ -265,9 +265,9 @@ First run downloads models (~5GB total). Subsequent runs use cached models. Cons
 ## File Sizes
 
 Expected downloads:
-- RemBERT: ~2.3 GB
+- RemBERT: ~2.7 GB
 - XLS-R: ~1.3 GB
-- Total: ~3.6 GB
+- Total: ~4.0 GB
 
 These are cached in `~/.cache/huggingface/` after first use.
 
@@ -314,7 +314,7 @@ pip install torch torchaudio transformers librosa soundfile pandas numpy scikit-
 python -m neuralNetwork.main create --config config/Network1.json
 
 # 3. Train
-python -m neuralNetwork.main train --config config/Network1.json --dataset datasetTrain --epochs 30 --patience 3
+python -m neuralNetwork.main train checkpoint/path_model --config config/Network1.json --dataset datasetTrain --epochs 30 --patience 3
 
 # 4. Done! Best model saved in checkpoints/
 ```
@@ -327,4 +327,3 @@ For issues or questions, check the project structure and ensure:
 - ✅ All dependencies installed
 - ✅ Text files are UTF-8 encoded
 - ✅ Audio files are in .opus format
-
